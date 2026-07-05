@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install -r api/requirements.txt
+          pip install ruff
+      - name: Lint
+        run: ruff check crawler test-gen executor self-healing triage report-gen api github-app
+      - name: Compile check
+        run: |
+          python -m py_compile crawler/crawl.py
+          python -m py_compile test-gen/generate_test_plan.py
+          python -m py_compile test-gen/json_to_playwright.py
+          python -m py_compile executor/run_tests.py
+          python -m py_compile self-healing/heal.py
+          python -m py_compile triage/triage.py
+          python -m py_compile report-gen/generate_report.py
+          python -m py_compile api/main.py
+          python -m py_compile api/pipeline.py
+
+  dashboard-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install
+      - run: npm run build

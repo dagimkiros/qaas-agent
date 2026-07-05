@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+node_modules/
+.next/
+dist/
+*.log
+runs/
+crawl_output.json
+test_plan.json
+results.json
+triaged_results.json
+report.md
+self-healing/audit_log.jsonl

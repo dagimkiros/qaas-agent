@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QaaS Test Plan",
+  "description": "The contract between Claude's test generation and the test executor.",
+  "type": "object",
+  "required": ["site_url", "generated_at", "scenarios"],
+  "properties": {
+    "site_url": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "crawl_summary": {
+      "type": "object",
+      "properties": {
+        "pages_found": { "type": "integer" },
+        "forms_found": { "type": "integer" },
+        "api_endpoints_found": { "type": "integer" }
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "type", "priority", "steps"],
+        "properties": {
+          "id": { "type": "string", "description": "e.g. TC-001" },
+          "title": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["functional", "regression", "accessibility", "api", "security-basic"]
+          },
+          "priority": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "target_page": { "type": "string" },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["action"],
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": ["goto", "click", "fill", "select", "assert_visible", "assert_text", "assert_status", "wait_for"]
+                },
+                "selector": { "type": "string" },
+                "value": { "type": "string" },
+                "expected": { "type": "string" }
+              }
+            }
+          },
+          "fallback_selectors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Used by the self-healing layer if the primary selector breaks"
+          }
+        }
+      }
+    }
+  }
+}
