@@ -32,10 +32,10 @@ def generate(crawl_data: dict) -> dict:
 
     try:
         return json.loads(cleaned)
-    except json.JSONDecodeError as e:
+    except json.JSONDecodeError:
         with open("last_failed_response.txt", "w") as f:
             f.write(cleaned)
-        print(f"JSON parse failed. Raw response saved to test-gen/last_failed_response.txt")
+        print("JSON parse failed. Raw response saved to test-gen/last_failed_response.txt")
         raise
 
 
